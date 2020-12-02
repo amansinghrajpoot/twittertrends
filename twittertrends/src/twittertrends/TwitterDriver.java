@@ -1,26 +1,101 @@
 package twittertrends;
 
-import java.util.List;
-
-import twitter4j.GeoLocation;
-import twitter4j.Location;
-import twitter4j.ResponseList;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import twitter4j.*;
 
 public class TwitterDriver {
 
 	
-	public static void main(String args[]) throws TwitterException  {
+	public static void main(String args[])  {
+		
+		String locationwoeid = null;
+		BufferedWriter bw = null;
+		FileWriter out = null;
+		BufferedReader br = null;
+		FileReader in = null;
 		
 		Twitter twitter = TwitterClass.getSession();
 		
-		Trends trends = twitter.getPlaceTrends(23424848);
-		for (int i = 0; i < trends.getTrends().length; i++) {
-		    System.out.println(trends.getTrends()[i].getName());
+		File twitter4jproperties = new File(System.getProperty("user.dir")+"//"+"twitter4j.properties");
+		FileInputStream fis;
+		try {
+			fis = new FileInputStream(twitter4jproperties);
+			Properties prop = new Properties();
+			prop.load(fis);
+		    locationwoeid = prop.getProperty("locationwoeid");
+		    fis.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Properties file not found!!");
+			System.exit(1);
+		} catch (IOException e) {
+			System.out.println("Something went wrong while reading the properties file!!");
 		}
+		
+		File tweetsfile = new File(System.getProperty("user.dir")+"//"+"tweets.dat");
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Calendar cal = Calendar.getInstance();
+		String date = dateFormat.format(cal.getTime());
+		
+		if (!tweetsfile.exists()) {
+			
 
-	}
-}
+				
+				try {
+					
+					TwitterClass.writeTweetsintofile(date, tweetsfile, twitter, locationwoeid);
+					
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					System.out.println(e.getLocalizedMessage());
+				}
+				
+			
+		}
+		else {
+			
+			try {
+				in = new FileReader(tweetsfile);
+				br = new BufferedReader(in);
+				
+				String filedate = br.readLine();
+				
+				Date d1 = dateFormat.parse(filedate);
+				Date d2 = dateFormat.parse(date);
+				
+				if(d1.before(d2)) {
+					
+					try {
+						
+						TwitterClass.writeTweetsintofile(date, tweetsfile, twitter, locationwoeid);
+						
+						
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						System.out.println(e.getLocalizedMessage());
+					}
+				    
+				}
+				
+				
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getLocalizedMessage());	
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getLocalizedMessage());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getLocalizedMessage());
+			}
+						
+		    }
+		
+		
+	} //main method
+}  //class
