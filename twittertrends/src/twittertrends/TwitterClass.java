@@ -109,6 +109,16 @@ public class TwitterClass {
 		bw.flush();
 	
 		ArrayList<String> trendslist = TwitterClass.getTop10Trends(twitter, Integer.parseInt(locationwoeid));
+		
+		bw.write(trendslist.size()+"\n");
+		bw.flush();
+		
+        for(String trend : trendslist) {
+			
+			bw.write(trend+"\n");
+			bw.flush();
+		}
+		
 		ArrayList<Status> statuslist =  TwitterClass.getTrendingTweets(twitter, trendslist);
 		
 		for(Status status : statuslist) {
@@ -116,7 +126,7 @@ public class TwitterClass {
 			bw.write(status.getText()+"\n");
 			bw.flush();
 		}
-		
+		System.out.println("New tweet file generated for date: "+date+" !!");
 		try {
 			bw.close();
 			out.close();

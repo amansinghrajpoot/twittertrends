@@ -81,6 +81,10 @@ public class TwitterDriver {
 					}
 				    
 				}
+				else {
+					
+					System.out.println("File already exists for date: "+date+" !!");
+				}
 				
 				
 			} catch (FileNotFoundException e) {
