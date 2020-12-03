@@ -1,16 +1,10 @@
 package twittertrends;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Properties;
 
 import twitter4j.*;
 
@@ -19,7 +13,6 @@ public class TwitterClass {
 
 	public static Twitter getSession(){
 		
-		Properties prop = new Properties();
 		
 	    File file = new File(System.getProperty("user.dir")+"//"+"twitter4j.properties");
 	    try{
@@ -37,16 +30,16 @@ public class TwitterClass {
 		
 	}
 	
-	public static ArrayList<String> getTop10Trends(Twitter twitter, int locationwoeid) {
+	public static ArrayList<Trend> getTop10Trends(Twitter twitter, int locationwoeid) {
 		
 		try {
 			Trends trends = twitter.getPlaceTrends(locationwoeid);
 			
-			ArrayList<String> trendslist = new ArrayList<String>();
+			ArrayList<Trend> trendslist = new ArrayList<Trend>();
 			
 			for(int i = 0; i < trends.getTrends().length; i ++) {
 				
-				trendslist.add(trends.getTrends()[i].getName());
+				trendslist.add(trends.getTrends()[i]);
 			    }
 			
 			return trendslist;
@@ -60,16 +53,17 @@ public class TwitterClass {
 		
 	}
 	
-	public static ArrayList<Status> getTrendingTweets(Twitter twitter, ArrayList<String> trendslist){
+	public static ArrayList<Status> getTrendingTweets(Twitter twitter, ArrayList<Trend> trendslist){
 		
 		ArrayList<Status> statuslist = new ArrayList<Status>();
 		QueryResult result = null;
 		Query[] query = new Query[trendslist.size()];
 		int k = 0;
         
-		for(String i : trendslist) {
+		for(Trend i : trendslist) {
 			
-			query[k] = new Query("#"+i);
+			query[k] = new Query("#"+i.getName());
+			query[k].setCount(100);
 			k += 1;
 		}
         
@@ -108,14 +102,14 @@ public class TwitterClass {
 	    bw.write(date+"\n");
 		bw.flush();
 	
-		ArrayList<String> trendslist = TwitterClass.getTop10Trends(twitter, Integer.parseInt(locationwoeid));
+		ArrayList<Trend> trendslist = TwitterClass.getTop10Trends(twitter, Integer.parseInt(locationwoeid));
 		
 		bw.write(trendslist.size()+"\n");
 		bw.flush();
 		
-        for(String trend : trendslist) {
+        for(Trend trend : trendslist) {
 			
-			bw.write(trend+"\n");
+			bw.write(trend.getName()+":"+trend.getTweetVolume()+"\n");
 			bw.flush();
 		}
 		

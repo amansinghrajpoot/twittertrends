@@ -13,8 +13,6 @@ public class TwitterDriver {
 	public static void main(String args[])  {
 		
 		String locationwoeid = null;
-		BufferedWriter bw = null;
-		FileWriter out = null;
 		BufferedReader br = null;
 		FileReader in = null;
 		
@@ -100,6 +98,7 @@ public class TwitterDriver {
 						
 		    }
 		
+		   Charts.prepareTrendData(tweetsfile);
 		
 	} //main method
 }  //class
