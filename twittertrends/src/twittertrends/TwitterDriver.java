@@ -98,7 +98,10 @@ public class TwitterDriver {
 						
 		    }
 		
-		   Charts.prepareTrendData(tweetsfile);
+		  String trendData = Charts.prepareTrendData(tweetsfile);
+		  String chart = Charts.prepareTrendsChart(trendData);
+		 
+		  ReportBrowser.createWindow(chart);
 		
 	} //main method
 }  //class
