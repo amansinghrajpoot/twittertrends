@@ -7,5 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/home/aman/git/repository/twittertrends/twitter4j-core-4.0.7.jar"/>
+	<classpathentry kind="lib" path="/home/aman/git/repository/twittertrends/json-simple-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

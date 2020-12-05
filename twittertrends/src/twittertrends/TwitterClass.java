@@ -53,73 +53,83 @@ public class TwitterClass {
 		
 	}
 	
-	public static ArrayList<Status> getTrendingTweets(Twitter twitter, ArrayList<Trend> trendslist){
+	public static JSONObject getTrendingTweets(Twitter twitter, ArrayList<Trend> trendslist){
 		
-		ArrayList<Status> statuslist = new ArrayList<Status>();
+		JSONObject tweetobj = new  JSONObject();
+		JSONArray  tweetsarr;
+		
 		QueryResult result = null;
-		Query[] query = new Query[trendslist.size()];
-		int k = 0;
-        
+		Query query = new Query();
+		
 		for(Trend i : trendslist) {
 			
-			query[k] = new Query("#"+i.getName());
-			query[k].setCount(100);
-			k += 1;
-		}
-        
-        
-        
-		try {
+			query = new Query("#"+i.getName());
+			query.setCount(500);			
 			
-			    for( int i = 0; i < query.length; i ++) {
+			try {
 			               
-			    	      result = twitter.search(query[i]);
-			
+			    	      result = twitter.search(query);
+			    	      tweetsarr = new JSONArray();
                           for (Status status : result.getTweets()) {
                         	  
-                        	  statuslist.add(status);
+                        	  tweetsarr.put(status.getText());
                                }
-        
-			    }
-			            
-		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
+                 tweetobj.put(i.getName(), tweetsarr);      
+			         
+	        	} catch (TwitterException e) {
+		 	// TODO Auto-generated catch block
 			e.printStackTrace();
+	     	}
+	       
+			
 		}
-	  
+		System.gc();
+        
+        
+	
 		
-		return statuslist;
+		return tweetobj;
 				
 	}
 	
 	public static void writeTweetsintofile(String date, File tweetsfile, Twitter twitter, String locationwoeid) throws Exception {
 		
+		JSONObject mainobject =  new JSONObject();
+		JSONObject hashtagobj = new  JSONObject();
+		JSONArray hashtagarr = new JSONArray();
+				
 		BufferedWriter bw = null;
 		FileWriter out = null;	
 		
+		hashtagobj.put("date", date);
+		
 		out = new FileWriter(tweetsfile);
 		bw = new BufferedWriter(out);
-	    bw.write(date+"\n");
-		bw.flush();
+	  
 	
 		ArrayList<Trend> trendslist = TwitterClass.getTop10Trends(twitter, Integer.parseInt(locationwoeid));
 		
-		bw.write(trendslist.size()+"\n");
-		bw.flush();
+		hashtagobj.put("hashtagcount",trendslist.size());
+		
 		
         for(Trend trend : trendslist) {
-			
-			bw.write(trend.getName()+":"+trend.getTweetVolume()+"\n");
-			bw.flush();
+        	
+			hashtagarr.put( new JSONObject().put( trend.getName(), trend.getTweetVolume()) );
 		}
 		
-		ArrayList<Status> statuslist =  TwitterClass.getTrendingTweets(twitter, trendslist);
+        hashtagobj.put("hashtags",hashtagarr);
+        
+                
+        JSONObject tweetobj =  TwitterClass.getTrendingTweets(twitter, trendslist);
 		
-		for(Status status : statuslist) {
-			
-			bw.write(status.getText()+"\n");
-			bw.flush();
-		}
+        mainobject.put("hashtag", hashtagobj);
+        mainobject.put("tweet", tweetobj);
+        
+        String jsonfile = mainobject.toString();
+        
+        bw.write(jsonfile);
+        bw.flush();
+        
 		System.out.println("New tweet file generated for date: "+date+" !!");
 		try {
 			bw.close();

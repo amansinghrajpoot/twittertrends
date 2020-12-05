@@ -1,53 +1,102 @@
 package twittertrends;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class Charts {
 	
-	public static String prepareTrendData(File tweetsfile) {
+	public static String prepareTrendData(JSONObject tweetsfile) {
 		
-		BufferedReader br = null;
-		FileReader in = null;
+		JSONObject hashtag = (JSONObject) tweetsfile.get("hashtag");
+		JSONArray hashtagarr = (JSONArray) hashtag.get("hashtags");
+		
 		String trendData = null;
 		
 		try {
-			System.out.println("Fetching Twitter's Trending topics");
-			in = new FileReader(tweetsfile);
-			br = new BufferedReader(in);
-			String filedate = br.readLine();
+			System.out.println("Fetching Twitter's Trending Hashtags");
+			
+			String filedate = (String) hashtag.get("date");
 			System.out.println("--------------------------------------- "+"Fetched Trending topic for date "+filedate+" ---------------------------------------");
-			StringBuilder sbd = new StringBuilder();
-	        int topicCount = Integer.parseInt(br.readLine());
-	        String topic[] = null;
+			StringBuilder sbd = new StringBuilder();	        
+	        @SuppressWarnings("rawtypes")
+			Iterator hasharrit = hashtagarr.iterator();
 	        
-	        for( int i = 0; i < topicCount - 1; i ++) {
-	        	topic = br.readLine().split(":");
-	        	if( Integer.parseInt(topic[1]) != -1) {
+	        JSONObject arrobj;
+	        
+	       while (hasharrit.hasNext()) {
+	    	   
+	    	  arrobj = (JSONObject) hasharrit.next();
+	    	  @SuppressWarnings("rawtypes")
+			  Set keys = arrobj.keySet();
+	    	  @SuppressWarnings("rawtypes")
+			  Iterator it = keys.iterator();
+	    	  String key = (String) it.next();
+
+	    	  if( Integer.parseInt( arrobj.get(key).toString()  ) != -1) {
 	        		
-	        		sbd.append("{ label: \""+ topic[0] +"\", y: "+ topic[1] +"},\n");
+	        		sbd.append("{ label: \""+ key +"\", y: "+ arrobj.get(key) +"},\n");
 	        	}
 	        	
 	        }
 	        
-	        topic = br.readLine().split(":");
-	        
-	        if( Integer.parseInt(topic[1]) == -1) {
-        		
-        		topic[1] = "0";
-        	}
-	        
-        	sbd.append("{ label: \""+ topic[0] +"\", y: "+ topic[1] +"}\n");
-        
-	        
+	        sbd.deleteCharAt(sbd.length() -2);
 	        trendData = sbd.toString();
+	        						
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getLocalizedMessage());
+			
+			System.exit(1);
+		}
+		System.gc();
+		return trendData;
+		
+		
+		
+	}
+	
+public static String prepareHashtagData(JSONObject tweetsfile) {
+		
+		
+		String hashtagData = null;
+		JSONObject hashtag = (JSONObject) tweetsfile.get("hashtag");
+		JSONArray hashtagarr = (JSONArray) hashtag.get("hashtags");
+		
+		try {
+			
+			
+			StringBuilder sbd = new StringBuilder();
+            
+			@SuppressWarnings("rawtypes")
+			Iterator hasharrit = hashtagarr.iterator();
+	        
+	        JSONObject arrobj;
+	        
+	        while (hasharrit.hasNext()) {
+		    	   
+		    	  arrobj = (JSONObject) hasharrit.next();
+		    	  @SuppressWarnings("rawtypes")
+				  Set keys = arrobj.keySet();
+		    	  @SuppressWarnings("rawtypes")
+			    	Iterator it = keys.iterator();
+		    	    String key = (String) it.next();
+	        		
+	        		sbd.append("{ label: \""+ key +"\", y: "+ key.length() +"},\n");
+	        	        	
+	        }
+	        
+	      
+	        sbd.deleteCharAt(sbd.length() -2);
+	        hashtagData = sbd.toString();
 	        			
-			in.close();
-			br.close();
+		
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -56,11 +105,11 @@ public class Charts {
 			System.exit(1);
 		}
 		
-		return trendData;
+		return hashtagData;
 		
 	}
 	
-	public static String prepareTrendsChart(String trendData) {
+	public static String prepareTrendsChart(String trendData, String hashtagData) {
 		
 		String chart = "<!DOCTYPE HTML>\n" + 
 				"<html>\n" + 
@@ -99,7 +148,7 @@ public class Charts {
 				"      animationEnabled: true,"+
 				"      colorSet: \"Shades\","+
 				"      title:{\n" + 
-				"        text: \"Twitter trending hashtags\"              \n" + 
+				"        text: \"Twitter Trending Hashtag Tweet Count\"              \n" + 
 				"      },\n" + 
 				"      data: [//array of dataSeries              \n" + 
 				"        { //dataSeries object\n" + 
@@ -118,7 +167,7 @@ public class Charts {
 				"      animationEnabled: true,"+
 				"      colorSet: \"blueShades\","+
 				"      title:{\n" + 
-				"        text: \"Trends\"              \n" + 
+				"        text: \"Trending Hashtags\"              \n" + 
 				"      },\n" + 
 				
 				  
@@ -126,13 +175,11 @@ public class Charts {
 				"        { //dataSeries object\n" + 
 				"\n" + 
 				"         /*** Change type \"column\" to \"bar\", \"area\", \"line\" or \"pie\"***/\n" + 
-				"         type: \"column\",\n" +
+				"         type: \"doughnut\",\n" +
 				"            legendMarkerType: \"triangle\",\n" + 
 				"            legendMarkerColor: \"green\",\n" + 
-				"            showInLegend: true,\n" + 
-				"            legendText: \"Country wise population\","+
 				"         dataPoints: [\n" + 
-				               trendData+
+				               hashtagData+
 				"         ]\n" + 
 				"       }\n" + 
 				"       ]\n" + 
@@ -155,7 +202,7 @@ public class Charts {
 				"				markerSize: 5,\n" + 
 				"				color: \"rgba(54,158,173,.7)\"," +
 				"         dataPoints: [\n" + 
-				               trendData+
+				               hashtagData+
 				"         ]\n" + 
 				"       }\n" + 
 				"       ]\n" + 
@@ -177,7 +224,7 @@ public class Charts {
 				
 				"<div id=\"chartContainer1\" style=\"width: 50%; height: 500px;display: inline-block;\"></div>"+
 				"<div id=\"chartContainer2\" style=\"width: 50%; height: 500px;display: inline-block;\"></div><br/>"+
-				"<div id=\"chartContainer3\" style=\"width: 100%; height: 400px;display: inline-block;\"></div>"+
+				"<div id=\"chartContainer3\" style=\"width: 100%; height: 500px;display: inline-block;\"></div>"+
 				
 				"</body>\n" + 
 				"</html>";
