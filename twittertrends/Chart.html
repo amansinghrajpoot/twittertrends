@@ -1,0 +1,209 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <script type="text/javascript">
+  window.onload = function () {
+  CanvasJS.addColorSet("Shades",
+                [//colorSet Array
+
+                "#488f31",
+                "#83af70",
+                "#bad0af",
+                "#f1f1f1",
+                "#f0b8b8",
+                "#e67f83",
+                "#346888",
+                "#5886a5",
+                "#9dc6e0"                
+                ]);  CanvasJS.addColorSet("blueShades",
+                [//colorSet Array
+
+                "#004c6d",
+                "#346888",
+                "#5986a5",
+                "#7ca6c2",
+                "#9fc6e0",
+                "#9dc6e0"                
+                ]);    var chart = new CanvasJS.Chart("chartContainer1", {
+
+      animationEnabled: true,      colorSet: "Shades",      title:{
+        text: "Twitter Trending Hashtag Tweet Count"              
+      },
+      data: [//array of dataSeries              
+        { //dataSeries object
+
+         /*** Change type "column" to "bar", "area", "line" or "pie"***/
+         type: "doughnut",
+         dataPoints: [
+{ label: "#DMKwithFarmers", y: 42877},
+{ label: "#WorldSoilDay", y: 10564},
+{ label: "#घन्टा_होगा_भारत_बंद", y: 11262},
+{ label: "#CBIUprootSSRKillers", y: 53169},
+{ label: "#8_दिसंबर_भारत_बन्द", y: 65982},
+{ label: "Saif", y: 11122},
+{ label: "AIMIM", y: 46116},
+{ label: "Owaisi", y: 12626},
+{ label: "#InternationalVolunteerDay", y: 14878},
+{ label: "#IVD2020", y: 14480},
+{ label: "#कल_भारत_बंद_नहीं_होगा", y: 11808},
+{ label: "#Volunteers", y: 12878},
+{ label: "#TakeBackFarmLaws", y: 77831},
+{ label: "#AarNoiAnnay", y: 19950},
+{ label: "#ArrestYograjSingh", y: 40266},
+{ label: "#AMMKremembersAMMA", y: 14085},
+{ label: "#धर्मान्तरण_की_पोल_खोल", y: 49548},
+{ label: "#मैं_भी_किसान", y: 37082},
+{ label: "#2020MAMA", y: 1949224},
+{ label: "#FarmersAreLifeLine", y: 58162}
+         ]
+       }
+       ]
+     });
+    var chart2 = new CanvasJS.Chart("chartContainer2", {
+
+      animationEnabled: true,      colorSet: "blueShades",      title:{
+        text: "Trending Hashtags"              
+      },
+      data: [//array of dataSeries              
+        { //dataSeries object
+
+         /*** Change type "column" to "bar", "area", "line" or "pie"***/
+         type: "doughnut",
+            legendMarkerType: "triangle",
+            legendMarkerColor: "green",
+         dataPoints: [
+{ label: "#DMKwithFarmers", y: 15},
+{ label: "#WorldSoilDay", y: 13},
+{ label: "#घन्टा_होगा_भारत_बंद", y: 20},
+{ label: "#CBIUprootSSRKillers", y: 20},
+{ label: "#8_दिसंबर_भारत_बन्द", y: 19},
+{ label: "Gabbar", y: 6},
+{ label: "Covaxin", y: 7},
+{ label: "Anil Vij", y: 8},
+{ label: "Saif", y: 4},
+{ label: "India's 10", y: 10},
+{ label: "Ravan", y: 5},
+{ label: "AIMIM", y: 5},
+{ label: "Saint Dr.", y: 9},
+{ label: "Andhra", y: 6},
+{ label: "Singh Ji Insan", y: 14},
+{ label: "Owaisi", y: 6},
+{ label: "#SaturdayMorning", y: 16},
+{ label: "#InternationalVolunteerDay", y: 26},
+{ label: "#SaturdayMotivation", y: 19},
+{ label: "#அம்மா", y: 6},
+{ label: "#SaturdayThoughts", y: 17},
+{ label: "#WakeUpOmRaut", y: 13},
+{ label: "#HappyBirthdayDhawan", y: 20},
+{ label: "#NetflixStreamFest", y: 18},
+{ label: "#Jayalalitha", y: 12},
+{ label: "#IVD2020", y: 8},
+{ label: "#SaturdayVibes", y: 14},
+{ label: "#कल_भारत_बंद_नहीं_होगा", y: 22},
+{ label: "#Volunteers", y: 11},
+{ label: "#TakeBackFarmLaws", y: 17},
+{ label: "#AarNoiAnnay", y: 12},
+{ label: "#ArrestYograjSingh", y: 18},
+{ label: "#KarnatakaBandh", y: 15},
+{ label: "#ShikharDhawan", y: 14},
+{ label: "#AMMKremembersAMMA", y: 18},
+{ label: "#NelsonMandela", y: 14},
+{ label: "#धर्मान्तरण_की_पोल_खोल", y: 22},
+{ label: "#HoneyFraud", y: 11},
+{ label: "#Thalaivi", y: 9},
+{ label: "#NDTV", y: 5},
+{ label: "#मैं_भी_किसान", y: 13},
+{ label: "#GodMorningSaturday", y: 19},
+{ label: "#HBDpayalrajput", y: 15},
+{ label: "#BhulaDunga", y: 11},
+{ label: "#IronLady", y: 9},
+{ label: "#happybirthdayravishkumar", y: 25},
+{ label: "#HBDParvatiNair", y: 15},
+{ label: "#BJPSouthEntry", y: 14},
+{ label: "#2020MAMA", y: 9},
+{ label: "#FarmersAreLifeLine", y: 19}
+         ]
+       }
+       ]
+     });
+    var chart3 = new CanvasJS.Chart("chartContainer3", {
+
+      animationEnabled: true,      title:{
+        text: "Trends"              
+      },
+      data: [//array of dataSeries              
+        { //dataSeries object
+
+         /*** Change type "column" to "bar", "area", "line" or "pie"***/
+         type: "splineArea",
+          toolTipContent: "{y} units",
+				type: "splineArea",
+				markerSize: 5,
+				color: "rgba(54,158,173,.7)",         dataPoints: [
+{ label: "#DMKwithFarmers", y: 15},
+{ label: "#WorldSoilDay", y: 13},
+{ label: "#घन्टा_होगा_भारत_बंद", y: 20},
+{ label: "#CBIUprootSSRKillers", y: 20},
+{ label: "#8_दिसंबर_भारत_बन्द", y: 19},
+{ label: "Gabbar", y: 6},
+{ label: "Covaxin", y: 7},
+{ label: "Anil Vij", y: 8},
+{ label: "Saif", y: 4},
+{ label: "India's 10", y: 10},
+{ label: "Ravan", y: 5},
+{ label: "AIMIM", y: 5},
+{ label: "Saint Dr.", y: 9},
+{ label: "Andhra", y: 6},
+{ label: "Singh Ji Insan", y: 14},
+{ label: "Owaisi", y: 6},
+{ label: "#SaturdayMorning", y: 16},
+{ label: "#InternationalVolunteerDay", y: 26},
+{ label: "#SaturdayMotivation", y: 19},
+{ label: "#அம்மா", y: 6},
+{ label: "#SaturdayThoughts", y: 17},
+{ label: "#WakeUpOmRaut", y: 13},
+{ label: "#HappyBirthdayDhawan", y: 20},
+{ label: "#NetflixStreamFest", y: 18},
+{ label: "#Jayalalitha", y: 12},
+{ label: "#IVD2020", y: 8},
+{ label: "#SaturdayVibes", y: 14},
+{ label: "#कल_भारत_बंद_नहीं_होगा", y: 22},
+{ label: "#Volunteers", y: 11},
+{ label: "#TakeBackFarmLaws", y: 17},
+{ label: "#AarNoiAnnay", y: 12},
+{ label: "#ArrestYograjSingh", y: 18},
+{ label: "#KarnatakaBandh", y: 15},
+{ label: "#ShikharDhawan", y: 14},
+{ label: "#AMMKremembersAMMA", y: 18},
+{ label: "#NelsonMandela", y: 14},
+{ label: "#धर्मान्तरण_की_पोल_खोल", y: 22},
+{ label: "#HoneyFraud", y: 11},
+{ label: "#Thalaivi", y: 9},
+{ label: "#NDTV", y: 5},
+{ label: "#मैं_भी_किसान", y: 13},
+{ label: "#GodMorningSaturday", y: 19},
+{ label: "#HBDpayalrajput", y: 15},
+{ label: "#BhulaDunga", y: 11},
+{ label: "#IronLady", y: 9},
+{ label: "#happybirthdayravishkumar", y: 25},
+{ label: "#HBDParvatiNair", y: 15},
+{ label: "#BJPSouthEntry", y: 14},
+{ label: "#2020MAMA", y: 9},
+{ label: "#FarmersAreLifeLine", y: 19}
+         ]
+       }
+       ]
+     });
+
+    chart.render();
+
+    chart2.render();
+
+    chart3.render();
+  }
+  </script>
+  <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+<body>
+<div id="chartContainer1" style="width: 50%; height: 500px;display: inline-block;"></div><div id="chartContainer2" style="width: 50%; height: 500px;display: inline-block;"></div><br/><div id="chartContainer3" style="width: 100%; height: 500px;display: inline-block;"></div></body>
+</html>
