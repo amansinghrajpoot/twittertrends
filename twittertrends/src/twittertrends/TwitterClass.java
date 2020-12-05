@@ -94,7 +94,7 @@ public class TwitterClass {
 	
 	public static void writeTweetsintofile(String date, File tweetsfile, Twitter twitter, String locationwoeid) throws Exception {
 		
-		JSONObject mainobject =  new JSONObject();
+		JSONObject rootobject =  new JSONObject();
 		JSONObject hashtagobj = new  JSONObject();
 		JSONArray hashtagarr = new JSONArray();
 				
@@ -122,10 +122,10 @@ public class TwitterClass {
                 
         JSONObject tweetobj =  TwitterClass.getTrendingTweets(twitter, trendslist);
 		
-        mainobject.put("hashtag", hashtagobj);
-        mainobject.put("tweet", tweetobj);
+        rootobject.put("hashtag", hashtagobj);
+        rootobject.put("tweet", tweetobj);
         
-        String jsonfile = mainobject.toString();
+        String jsonfile = rootobject.toString();
         
         bw.write(jsonfile);
         bw.flush();
