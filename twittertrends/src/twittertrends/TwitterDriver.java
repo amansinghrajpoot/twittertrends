@@ -11,17 +11,18 @@ import org.json.simple.parser.*;
 
 import twitter4j.*;
 
-public class TwitterDriver {
+public final class TwitterDriver {
 
 	
 	public static void main(String args[])  {
 		
-		
+		System.out.println("Connecting with Twitter");
 				
 		String locationwoeid = null;
 		org.json.simple.JSONObject tweetreader = null;
 		
 		Twitter twitter = TwitterClass.getSession();
+		System.out.println("Connected with Twitter");
 		
 		File twitter4jproperties = new File(System.getProperty("user.dir")+"//"+"twitter4j.properties");
 		FileInputStream fis;
@@ -44,28 +45,21 @@ public class TwitterDriver {
 		
 		
 		
-		try {
-			
-		 tweetreader = (org.json.simple.JSONObject) jp.parse(new FileReader(tweetsfile));
-		} catch (IOException | org.json.simple.parser.ParseException e1) {
-			// TODO Auto-generated catch block
-			System.out.println(e1.getLocalizedMessage());
-			System.exit(1);
-		}
-		
-		
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		Calendar cal = Calendar.getInstance();
 		String date = dateFormat.format(cal.getTime());
 		
 		if (!tweetsfile.exists()) {
-			
-
 				
 				try {
-					
 					TwitterClass.writeTweetsintofile(date, tweetsfile, twitter, locationwoeid);
-					
+					try {					
+				    	 tweetreader = (org.json.simple.JSONObject) jp.parse(new FileReader(tweetsfile));
+				    	} catch (IOException | org.json.simple.parser.ParseException e1) {
+						// TODO Auto-generated catch block
+						System.out.println(e1.getLocalizedMessage());
+						System.exit(1);
+				    	}
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -76,9 +70,20 @@ public class TwitterDriver {
 		}
 		else {
 			
+
+			    try {
+				 	 tweetreader = (org.json.simple.JSONObject) jp.parse(new FileReader(tweetsfile));
+		    	} catch (IOException | org.json.simple.parser.ParseException e1) {
+				// TODO Auto-generated catch block
+				System.out.println(e1.getLocalizedMessage());
+				System.exit(1);
+		    	}
+			
+			JSONObject hashtagobj = null;
 			try {
 			
-				JSONObject hashtagobj  =  (JSONObject) tweetreader.get("hashtag") ;
+				 hashtagobj  =  (JSONObject) tweetreader.get("hashtag") ;
+				
 				String filedate = (String) hashtagobj.get("date");
 				
 				Date d1 = dateFormat.parse(filedate);
@@ -105,15 +110,19 @@ public class TwitterDriver {
 								// TODO Auto-generated catch block
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
-				System.out.println(e.getLocalizedMessage());
+				System.out.println(e.getLocalizedMessage()); 
 			}
 						
 		    }
 		
+
+		
+		
 		  String trendData = Charts.prepareTrendData(tweetreader);
 		  String hashtagData = Charts.prepareHashtagData(tweetreader);
+		  String hatespeechData = Charts.prepareHateSpeechData(tweetreader);
 		  
-		  String chart = Charts.prepareTrendsChart(trendData, hashtagData);
+		  String chart = Charts.prepareTrendsChart(trendData, hashtagData, hatespeechData);
 		 
 		  ReportBrowser.createWindow(chart);
 		

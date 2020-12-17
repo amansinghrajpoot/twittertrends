@@ -10,7 +10,7 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class Charts {
+public final class Charts {
 	
 	public static String prepareTrendData(JSONObject tweetsfile) {
 		
@@ -22,15 +22,17 @@ public class Charts {
 		try {
 			System.out.println("Fetching Twitter's Trending Hashtags");
 			
-			String filedate = (String) hashtag.get("date");
-			System.out.println("--------------------------------------- "+"Fetched Trending topic for date "+filedate+" ---------------------------------------");
+			//String filedate = (String) hashtag.get("date");
+			System.out.println("--------------------------------------- "+"Fetched data "+" ---------------------------------------");
 			StringBuilder sbd = new StringBuilder();	        
 	        @SuppressWarnings("rawtypes")
 			Iterator hasharrit = hashtagarr.iterator();
 	        
 	        JSONObject arrobj;
 	        
-	       while (hasharrit.hasNext()) {
+	        System.out.println("*** Generating chart for trending tweets ***");
+	        
+	        while (hasharrit.hasNext()) {
 	    	   
 	    	  arrobj = (JSONObject) hasharrit.next();
 	    	  @SuppressWarnings("rawtypes")
@@ -56,14 +58,70 @@ public class Charts {
 			System.exit(1);
 		}
 		System.gc();
+		
+		 System.out.println("*** Chart for trending tweet has been generated ***");
 		return trendData;
 		
 		
 		
 	}
 	
-public static String prepareHashtagData(JSONObject tweetsfile) {
+    @SuppressWarnings("unchecked")
+    public static String prepareHateSpeechData(JSONObject tweetsfile) {
 		
+	    System.out.println("*** Analyzing hate speech ***");
+		
+		String hatespeechData = null;
+		JSONObject tweet = (JSONObject) tweetsfile.get("tweet");
+		JSONArray tweetarr = null;
+		int count = 0;
+		String hashtag = null;
+		
+		
+		StringBuilder sbd = new StringBuilder();
+		double[] vector = null;
+//		JSONArray tarr = new JSONArray();
+		String tweetstr = null;
+		
+		Set<String> keys = tweet.keySet();
+		Iterator<String> it = keys.iterator();
+		
+		TFIDF.getWords();
+				
+		while(it.hasNext()) {
+			
+			hashtag = it.next();
+			
+			tweetarr = (JSONArray) tweet.get(hashtag);
+			   for(int i = 0; i < tweetarr.size(); i ++) {
+				   
+				   tweetstr = (String) tweetarr.get(i);
+				 //  vector = TFIDF.generate(tweetstr, tweetarr);
+				     vector = Hashing.hash(tweetstr);
+				    		 
+//				   tarr.add(tweetstr);				   				     
+				     
+				   if(Classifier.classify(vector) > 0.7) {
+					   count += 1;
+				   }
+		        }
+			   sbd.append("{ label: \""+ hashtag +"\", y: "+ count +"},\n");
+			   count = 0;
+			
+		 }
+		
+		 sbd.deleteCharAt(sbd.length() -2);
+         hatespeechData = sbd.toString();
+		
+         System.out.println("*** Done classification ***");
+         
+         return hatespeechData;
+		
+	}
+	
+    public static String prepareHashtagData(JSONObject tweetsfile) {
+		
+    	System.out.println("*** Generating chart for trending hashtags ***");
 		
 		String hashtagData = null;
 		JSONObject hashtag = (JSONObject) tweetsfile.get("hashtag");
@@ -95,8 +153,6 @@ public static String prepareHashtagData(JSONObject tweetsfile) {
 	      
 	        sbd.deleteCharAt(sbd.length() -2);
 	        hashtagData = sbd.toString();
-	        			
-		
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -105,11 +161,15 @@ public static String prepareHashtagData(JSONObject tweetsfile) {
 			System.exit(1);
 		}
 		
+		System.out.println("*** chart for trending hashtags has been generated ***");
+		
 		return hashtagData;
 		
 	}
 	
-	public static String prepareTrendsChart(String trendData, String hashtagData) {
+    //creates html chart
+    
+	public static String prepareTrendsChart(String trendData, String hashtagData, String hatespeechData) {
 		
 		String chart = "<!DOCTYPE HTML>\n" + 
 				"<html>\n" + 
@@ -176,6 +236,7 @@ public static String prepareHashtagData(JSONObject tweetsfile) {
 				"\n" + 
 				"         /*** Change type \"column\" to \"bar\", \"area\", \"line\" or \"pie\"***/\n" + 
 				"         type: \"doughnut\",\n" +
+				"          toolTipContent: \"{label}\",\n" + 
 				"            legendMarkerType: \"triangle\",\n" + 
 				"            legendMarkerColor: \"green\",\n" + 
 				"         dataPoints: [\n" + 
@@ -190,19 +251,25 @@ public static String prepareHashtagData(JSONObject tweetsfile) {
 				"      animationEnabled: true,"+
 
 				"      title:{\n" + 
-				"        text: \"Trends\"              \n" + 
+				"        text: \"Hate Speech\"              \n" + 
 				"      },\n" + 
+				"    axisY: {\n"
+				+ "		title: \"Hate Speech Count\",\n"
+				+ "	}," +
+				"    axisX: {\n"
+				+ "		title: \"Hashtags\",\n"
+				+ "	}," +
 				"      data: [//array of dataSeries              \n" + 
 				"        { //dataSeries object\n" + 
 				"\n" + 
 				"         /*** Change type \"column\" to \"bar\", \"area\", \"line\" or \"pie\"***/\n" + 
 				"         type: \"splineArea\",\n" + 
-				"          toolTipContent: \"{y} units\",\n" + 
+				"          toolTipContent: \"{label} : {y}\",\n" + 
 				"				type: \"splineArea\",\n" + 
 				"				markerSize: 5,\n" + 
 				"				color: \"rgba(54,158,173,.7)\"," +
 				"         dataPoints: [\n" + 
-				               hashtagData+
+				hatespeechData+
 				"         ]\n" + 
 				"       }\n" + 
 				"       ]\n" + 
@@ -239,7 +306,7 @@ public static String prepareHashtagData(JSONObject tweetsfile) {
 			fw.close();
 			bw.close();
 			
-			System.out.println("Trending topics chart created...");
+			System.out.println("Finished...");
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -248,5 +315,7 @@ public static String prepareHashtagData(JSONObject tweetsfile) {
 		
 		return chart;
 	}
+	
+
 
 }
